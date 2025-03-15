@@ -1,0 +1,32 @@
+{
+  "user_name": "Armando",
+  "initial_setup_done": true,
+  "show_task_progress": true,
+  "show_quotes": true,
+  "tasks": [
+    {
+      "Name": "Jack: gita-hc automation endpoints",
+      "Done": true
+    },
+    {
+      "Name": "LinuxTips: finalizar aulas de Kubernetes",
+      "Done": false
+    },
+    {
+      "Name": "Pls: copiar CLI",
+      "Done": false
+    },
+    {
+      "Name": "asdfhiaosfunohpz2kmohzkpv2mophz2komphz2komphz2komp2hzkomp2hzokpm2hozkp2mohzpk2mohzp2kmoh",
+      "Done": false
+    },
+    {
+      "Name": "GHC: melhorar performance das chamadas de API",
+      "Done": false
+    },
+    {
+      "Name": "hello",
+      "Done": false
+    }
+  ]
+}
