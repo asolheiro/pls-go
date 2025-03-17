@@ -3,7 +3,6 @@ package greetings
 import (
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	palette "github.com/asolheiro/pls/internal/color-palette"
@@ -18,7 +17,7 @@ func PrintGreeting(plt palette.ColorPalette, name string) {
 		fmt.Sprintf("Hello, %s! %s", name, formatTimeAndDate(time.Now())), 
 		size,
 	)
-	plt.HeaderGreeting.Println(replaceSpacesWithLines(greetingForm))
+	plt.HeaderGreeting.Println(utils.ReplaceSpacesWithLines(greetingForm))
 }
 
 func PrintQuotes(plt palette.ColorPalette) {
@@ -48,14 +47,4 @@ func formatTimeAndDate(t time.Time) string {
 		t.Format("03:04 PM"))
 }
 
-func replaceSpacesWithLines(s string) string {
-	trimmed := strings.TrimSpace(s)
-	
-	totalWidth, _ := utils.GetTerminalFullWidth()
-	contentWidth := len(trimmed)
-	paddingWidth := (totalWidth - contentWidth - 2) / 2
-	
-	linePadding := strings.Repeat("─", paddingWidth-1)
-	
-	return fmt.Sprintf("%s  %s  %s", linePadding, trimmed, linePadding)
-}
+

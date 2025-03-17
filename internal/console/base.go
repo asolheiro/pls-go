@@ -7,8 +7,6 @@ import (
 	"unicode/utf8"
 
 	palette "github.com/asolheiro/pls/internal/color-palette"
-	grt "github.com/asolheiro/pls/internal/greetings"
-	"github.com/asolheiro/pls/internal/settings"
 	"github.com/asolheiro/pls/internal/tasks/operations"
 	"github.com/asolheiro/pls/internal/utils"
 	"github.com/charmbracelet/lipgloss"
@@ -17,15 +15,9 @@ import (
 	"golang.org/x/term"
 )
 
-func PrintTasksTable(plt palette.ColorPalette) {
-    sett, _ := settings.LoadConfigs()
-    if sett.Quotes {
-        grt.PrintGreeting(plt, sett.UserName)
-        grt.PrintQuotes(plt)
-    } else {
-        grt.PrintGreeting(plt, sett.UserName)
-    }
 
+
+func RenderTasksTable(tasks []operations.Task) int {
     width, _, err := term.GetSize(int(os.Stdout.Fd()))
     if err != nil {
         width = 80
@@ -61,7 +53,7 @@ func PrintTasksTable(plt palette.ColorPalette) {
         completedTasks int
         taskRow string
     )
-    tasks, _ := operations.GetAllTasks()
+    
     for index, task := range tasks {
         statusStyle := colorPal.TaskPendingStyle
         if task.Done {
@@ -98,24 +90,15 @@ func PrintTasksTable(plt palette.ColorPalette) {
         }
         var statusChar string
         if task.Done {
-            statusChar = colorPal.StatusCharStyle.Render(MapDoneToChar(task.Done))
+            statusChar = colorPal.StatusCharStyle.Render(utils.MapDoneToChar(task.Done))
         } else {
-            statusChar = statusStyle.Render(MapDoneToChar(task.Done))
+            statusChar = statusStyle.Render(utils.MapDoneToChar(task.Done))
         }
 
         taskRendered := statusStyle.Render(taskRow) + statusChar
         fmt.Println(taskRendered)
     }
-        
-    RenderProgressBar(plt, len(tasks), completedTasks)
-}
-
-func MapDoneToChar(done bool) string {
-	if done {
-		return "✓"
-	} else {
-		return "○"
-	}
+    return completedTasks
 }
 
 // RenderProgressBar creates a text-based progress bar.
@@ -138,7 +121,7 @@ func RenderProgressBar(plt palette.ColorPalette, total,  completed int) {
     taskRatio := tasksRatioStyles.Render(
         fmt.Sprintf("%d/%d", completed, total),
     )
-
+    
     progressBar := plt.CompleteBar.Sprint(completedBar) + plt.FinishedBar.Sprintf(remaingTasksBar)
     completeBar := fmt.Sprintf("%s %s", progressBar, taskRatio)
     width, err := utils.GetTerminalFullWidth()

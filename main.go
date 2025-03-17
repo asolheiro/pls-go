@@ -22,9 +22,11 @@ func main() {
 		switch os.Args[1] {
 		case "add":
 			if os.Args[2] != "" {
-				fmt.Println("Insert a task")
+				if err := operations.AddTask(os.Args[2]); err == nil {
+					console.AddTaskConsole(plt, os.Args[2])
+				}
 			} else {
-				operations.AddTask(os.Args[2])
+				fmt.Println("Insert a task")
 			}
 		default:
 			fmt.Println("Invalid command")
