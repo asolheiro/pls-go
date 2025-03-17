@@ -1,8 +1,50 @@
 package palette
 
 import (
+	"github.com/charmbracelet/lipgloss"
 	"github.com/gookit/color"
 )
+
+type ColorStyles struct {
+	HeaderStyle lipgloss.Style
+	DividerStyle lipgloss.Style
+	TaskCompletedStyle lipgloss.Style
+	TaskPendingStyle lipgloss.Style
+	StrikeStyle lipgloss.Style
+	StatusCharStyle lipgloss.Style
+}
+
+func NewPalette() ColorStyles {
+	headerStyle := lipgloss.NewStyle().
+		Bold(false).
+		Foreground(lipgloss.Color("#D47BD5")).
+		Align(lipgloss.Center)
+
+	dividerStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#D77DD8"))
+
+	taskCompletedStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#888C84"))
+
+	taskPendingStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#B38EE9"))
+
+	strikeStyle := lipgloss.NewStyle().
+		Strikethrough(true).
+		Align(lipgloss.Center)
+
+	statusCharStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#A5D9A3"))
+
+	return ColorStyles{
+		HeaderStyle: headerStyle,
+		DividerStyle: dividerStyle,
+		TaskCompletedStyle: taskCompletedStyle,
+		TaskPendingStyle: taskPendingStyle,
+		StrikeStyle: strikeStyle,
+		StatusCharStyle: statusCharStyle,
+	}
+}
 
 // ColorPalette representa um conjunto de cores usadas na aplicação
 type ColorPalette struct {

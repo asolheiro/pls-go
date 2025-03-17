@@ -20,3 +20,4 @@ const (
 	PLSCompleteBarStyle       = "bar.complete"
 	PLSFinishedBarStyle       = "bar.finished"
 )
+

@@ -2,19 +2,35 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	palette "github.com/asolheiro/pls/internal/color-palette"
-	grt "github.com/asolheiro/pls/internal/greetings"
+	"github.com/asolheiro/pls/internal/console"
+	"github.com/asolheiro/pls/internal/settings"
 	"github.com/asolheiro/pls/internal/tasks/operations"
 )
 
+const fileName = "config.json"
+
 func main() {
+	settings.CheckAndCreateConfig(fileName)
 	plt := palette.LoadColorPalette()
 
-	grt.PrintGreeting(plt,"Armando")		
+	if len(os.Args) == 1{
+		console.PrintTasksTable(plt)
+	} else {
+		switch os.Args[1] {
+		case "add":
+			if os.Args[2] != "" {
+				fmt.Println("Insert a task")
+			} else {
+				operations.AddTask(os.Args[2])
+			}
+		default:
+			fmt.Println("Invalid command")
+		}
 
-	if err := operations.ClearAllTask("config.json"); err != nil {
-		fmt.Println(err)
 	}
-	
 }
+
+

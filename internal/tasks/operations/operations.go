@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"slices"
+
+	"github.com/asolheiro/pls/internal/utils"
 )
 
 type Settings struct {
@@ -22,15 +24,13 @@ type Task struct {
 }
 
 
-
-func AddTask(fileName string, newTask Task) error {
-	filePath := getFilePath(fileName)
+func AddTask(newTaskName string) error {
+	configPath := utils.GetFilePath()
     
-    data, err := os.ReadFile(filePath)
+    data, err := os.ReadFile(configPath)
     if err != nil {
         if os.IsNotExist(err) {
-            // Pass the full file path here, not just the filename
-            return writeJSONWithEntry(filePath, Settings{})
+            return WriteJSONWithEntry(configPath, Settings{})
         }
         return fmt.Errorf("error reading file: %v", err)
     }
@@ -40,15 +40,20 @@ func AddTask(fileName string, newTask Task) error {
         return fmt.Errorf("error parsing JSON: %v", err)
     }
     
-    plsSettings.Tasks = append(plsSettings.Tasks, newTask)
+    plsSettings.Tasks = append(
+        plsSettings.Tasks, 
+        Task{
+            newTaskName,
+            false,  
+    })
     
-    return writeJSONWithEntry(filePath, plsSettings)
+    return WriteJSONWithEntry(configPath, plsSettings)
 }
 
-func DeleteTask(fileName string, taskIndex int) error {
-    filePath := getFilePath(fileName)
+func DeleteTask( string, taskIndex int) error {
+    configPath := utils.GetFilePath()
     
-    data, err := os.ReadFile(filePath)
+    data, err := os.ReadFile(configPath)
     if err != nil {
         return fmt.Errorf("error reading file: %v", err)
     }
@@ -58,19 +63,18 @@ func DeleteTask(fileName string, taskIndex int) error {
         return fmt.Errorf("error parsing JSON: %v", err)
     }
     
-    // Check if the index is valid
     if taskIndex < 0 || taskIndex >= len(plsSettings.Tasks) {
         return fmt.Errorf("invalid task index: %d", taskIndex)
     }
     plsSettings.Tasks = slices.Delete(plsSettings.Tasks, taskIndex, taskIndex + 1)
     
-    return writeJSONWithEntry(filePath, plsSettings)
+    return WriteJSONWithEntry(configPath, plsSettings)
 }
 
-func DoneTaks(fileName string, taskIndex int) error {
-    filePath := getFilePath(fileName)
+func MarkAsDoneTaks( string, taskIndex int) error {
+    configPath := utils.GetFilePath()
     
-    data, err := os.ReadFile(filePath)
+    data, err := os.ReadFile(configPath)
     if err != nil {
         return fmt.Errorf("error reading file: %v", err)
     }
@@ -80,20 +84,63 @@ func DoneTaks(fileName string, taskIndex int) error {
         return fmt.Errorf("error parsing JSON: %v", err)
     }
     
-    // Check if the index is valid
     if taskIndex < 0 || taskIndex >= len(plsSettings.Tasks) {
         return fmt.Errorf("invalid task index: %d", taskIndex)
     }
 	
 	plsSettings.Tasks[taskIndex].Done = true
 
-    return writeJSONWithEntry(filePath, plsSettings)
+    return WriteJSONWithEntry(configPath, plsSettings)
 }
 
-func CleanDoneTasks(fileName string) error {
-    filePath := getFilePath(fileName)
+func MarkAsUndoneTaks( string, taskIndex int) error {
+    configPath :=utils.GetFilePath()
     
-    data, err := os.ReadFile(filePath)
+    data, err := os.ReadFile(configPath)
+    if err != nil {
+        return fmt.Errorf("error reading file: %v", err)
+    }
+    
+    var plsSettings Settings
+    if err := json.NewDecoder(bytes.NewReader(data)).Decode(&plsSettings); err != nil {
+        return fmt.Errorf("error parsing JSON: %v", err)
+    }
+    
+    if taskIndex < 0 || taskIndex >= len(plsSettings.Tasks) {
+        return fmt.Errorf("invalid task index: %d", taskIndex)
+    }
+	
+	plsSettings.Tasks[taskIndex].Done = false
+
+    return WriteJSONWithEntry(configPath, plsSettings)
+}
+
+func EditTaskName( string, taskIndex int, newName string) error {
+    configPath :=utils.GetFilePath()
+    
+    data, err := os.ReadFile(configPath)
+    if err != nil {
+        return fmt.Errorf("error reading file: %v", err)
+    }
+    
+    var plsSettings Settings
+    if err := json.NewDecoder(bytes.NewReader(data)).Decode(&plsSettings); err != nil {
+        return fmt.Errorf("error parsing JSON: %v", err)
+    }
+    
+    if taskIndex < 0 || taskIndex >= len(plsSettings.Tasks) {
+        return fmt.Errorf("invalid task index: %d", taskIndex)
+    }
+	
+	plsSettings.Tasks[taskIndex].Name = newName
+
+    return WriteJSONWithEntry(configPath, plsSettings)
+}
+
+func CleanDoneTasks( string) error {
+    configPath :=utils.GetFilePath()
+    
+    data, err := os.ReadFile(configPath)
     if err != nil {
         return fmt.Errorf("error reading file: %v", err)
     }
@@ -110,13 +157,13 @@ func CleanDoneTasks(fileName string) error {
         }
     }
 
-    return writeJSONWithEntry(filePath, plsSettings)
+    return WriteJSONWithEntry(configPath, plsSettings)
 }
 
-func ClearAllTask(fileName string) error {
-    filePath := getFilePath(fileName)
+func ClearAllTask( string) error {
+    configPath :=utils.GetFilePath()
     
-    data, err := os.ReadFile(filePath)
+    data, err := os.ReadFile(configPath)
     if err != nil {
         return fmt.Errorf("error reading file: %v", err)
     }
@@ -128,6 +175,21 @@ func ClearAllTask(fileName string) error {
     
     plsSettings.Tasks = slices.Delete(plsSettings.Tasks, 0, len(plsSettings.Tasks))
 
-    return writeJSONWithEntry(filePath, plsSettings)
+    return WriteJSONWithEntry(configPath, plsSettings)
 }
 
+func GetAllTasks() ( []Task,error ) {
+    configPath :=utils.GetFilePath()
+    
+    data, err := os.ReadFile(configPath)
+    if err != nil {
+        return nil, fmt.Errorf("error reading file: %v", err)
+    }
+    
+    var plsSettings Settings
+    if err := json.NewDecoder(bytes.NewReader(data)).Decode(&plsSettings); err != nil {
+        return nil, fmt.Errorf("error parsing JSON: %v", err)
+    }
+
+    return plsSettings.Tasks, nil
+}

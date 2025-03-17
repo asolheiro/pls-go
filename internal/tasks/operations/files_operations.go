@@ -4,16 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"path/filepath"
 )
 
-func getFilePath(fileName string) string {
-	homeDir, _ := os.UserHomeDir()
-	return filepath.Join(homeDir, ".config", "pls", fileName)
-}
+
 
 // Helper function to write entries to JSON file
-func writeJSONWithEntry(filename string, plsSet Settings) error {
+func WriteJSONWithEntry(filename string, plsSet Settings) error {
 	jsonData, err := json.MarshalIndent(plsSet, "", "  ")
 	if err != nil {
 		return fmt.Errorf("error creating JSON: %v", err)
