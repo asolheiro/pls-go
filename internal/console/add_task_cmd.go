@@ -9,21 +9,21 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-func AddTaskConsole(plt palette.ColorPalette, taskName string) {
+func AddTaskConsole(plt palette.ColorStyles, taskName string) {
 	AddTaskHeader(plt, taskName)
 	tasks, _ := operations.GetAllTasks()
 
-	completedTasks := RenderTasksTable(tasks)
+	completedTasks := RenderTasksTable(plt, tasks)
 	RenderProgressBar(plt, len(tasks), completedTasks)
 }
 
-func AddTaskHeader(plt palette.ColorPalette, taskName string) {
+func AddTaskHeader(plt palette.ColorStyles, taskName string) {
 	var (
 		textStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#A5D9A3")).
-			Align(lipgloss.Center)
+				Foreground(palette.GreenMint).
+				Align(lipgloss.Center)
 		linesStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#B38EE9"))
+				Foreground(palette.PurpleLavender)
 	)
 
 	rawText := fmt.Sprintf(
@@ -41,4 +41,8 @@ func AddTaskHeader(plt palette.ColorPalette, taskName string) {
 	)
 
 	fmt.Println(headerFormatted)
+}
+
+func AddTaskHelp() {
+
 }

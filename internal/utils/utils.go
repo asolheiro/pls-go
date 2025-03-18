@@ -22,33 +22,33 @@ func GetFilePath() string {
 }
 
 func ReplaceSpacesWithLines(s string) string {
-    trimmed := strings.TrimSpace(s)
-    
-    totalWidth, _ := GetTerminalFullWidth()
-    contentWidth := GetVisibleLength(trimmed)
-    paddingWidth := (totalWidth - contentWidth - 2) / 2
-    linePadding := strings.Repeat("─", paddingWidth)
-    
-    return fmt.Sprintf("%s %s %s", linePadding, trimmed, linePadding)
+	trimmed := strings.TrimSpace(s)
+
+	totalWidth, _ := GetTerminalFullWidth()
+	contentWidth := GetVisibleLength(trimmed)
+	paddingWidth := (totalWidth - contentWidth - 2) / 2
+	linePadding := strings.Repeat("─", paddingWidth)
+
+	return fmt.Sprintf("%s %s %s", linePadding, trimmed, linePadding)
 }
 
 // Helper function to get the visible length of a string (excluding ANSI codes)
 func GetVisibleLength(s string) int {
-    re := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-    
-    cleanStr := re.ReplaceAllString(s, "")
-    
-    return utf8.RuneCountInString(cleanStr)
+	re := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+
+	cleanStr := re.ReplaceAllString(s, "")
+
+	return utf8.RuneCountInString(cleanStr)
 }
 
 func LinePaddings(s string) string {
-    trimmed := strings.TrimSpace(s)
-    
-    totalWidth, _ := GetTerminalFullWidth()
-    contentWidth := GetVisibleLength(trimmed)
-    paddingWidth := (totalWidth - contentWidth - 2) / 2
-    linePadding := strings.Repeat("─", paddingWidth)
-    return linePadding
+	trimmed := strings.TrimSpace(s)
+
+	totalWidth, _ := GetTerminalFullWidth()
+	contentWidth := GetVisibleLength(trimmed)
+	paddingWidth := (totalWidth - contentWidth - 2) / 2
+	linePadding := strings.Repeat("─", paddingWidth)
+	return linePadding
 }
 
 func MapDoneToChar(done bool) string {

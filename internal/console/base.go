@@ -15,120 +15,141 @@ import (
 	"golang.org/x/term"
 )
 
+// RenderTasksTable creates a text-based table to show tasks
+func RenderTasksTable(plt palette.ColorStyles, tasks []operations.Task) int {
+	width, _, err := term.GetSize(int(os.Stdout.Fd()))
+	if err != nil {
+		width = 80
+	}
 
+	idWidth := 4
+	statusWidth := 8
+	taskWidth := 80 - idWidth - statusWidth - 4
+	tableWidth := 80
+	leftPadding := (width - tableWidth) / 2
+	if leftPadding < 0 {
+		leftPadding = 0
+	}
+	padStr := strings.Repeat(" ", leftPadding)
 
-func RenderTasksTable(tasks []operations.Task) int {
-    width, _, err := term.GetSize(int(os.Stdout.Fd()))
-    if err != nil {
-        width = 80
-    }
-    
-    idWidth := 4
-    statusWidth := 8
-    
+	header := fmt.Sprintf("%s%-*s%-*s%-*s",
+		padStr,
+		idWidth, plt.HeaderStyle.Render("ID   "),
+		taskWidth, plt.HeaderStyle.Render("TASK                                                          "),
+		statusWidth, plt.HeaderStyle.Render("STATUS"))
 
-    taskWidth := 80 - idWidth - statusWidth - 4
-    
-    tableWidth := 80
-    leftPadding := (width - tableWidth) / 2
-    if leftPadding < 0 {
-        leftPadding = 0
-    }
-    padStr := strings.Repeat(" ", leftPadding)
+	divider := padStr + plt.DividerStyle.Render(strings.Repeat("━", tableWidth))
 
-    colorPal := palette.NewPalette()
-    
-    header := fmt.Sprintf("%s%-*s%-*s%-*s",
-        padStr,
-        idWidth, colorPal.HeaderStyle.Render("ID   "),
-        taskWidth, colorPal.HeaderStyle.Render("TASK                                                          "),
-        statusWidth, colorPal.HeaderStyle.Render("STATUS"))
-    
-    divider := padStr + colorPal.DividerStyle.Render(strings.Repeat("━", tableWidth))
-    
-    fmt.Println(header)
-    fmt.Println(divider)
+	fmt.Println(header)
+	fmt.Println(divider)
 
-    var (
-        completedTasks int
-        taskRow string
-    )
-    
-    for index, task := range tasks {
-        statusStyle := colorPal.TaskPendingStyle
-        if task.Done {
-            statusStyle = colorPal.TaskCompletedStyle
-            completedTasks++
-            
-            indexStr := fmt.Sprintf("%d", index+1)
-            
-            indexRuneCount := utf8.RuneCountInString(indexStr)
-            taskNameRuneCount := utf8.RuneCountInString(task.Name)
-            
-            indexStrStyled := colorPal.StrikeStyle.Render(indexStr)
-            taskNameStyled := colorPal.StrikeStyle.Render(task.Name)
-            
-            taskRow = fmt.Sprintf("%s %s%s %s%s",
-                padStr,
-                indexStrStyled,
-                strings.Repeat(" ", idWidth-1-indexRuneCount),
-                taskNameStyled,
-                strings.Repeat(" ", taskWidth-1-taskNameRuneCount),
-            )
-        } else {
-            indexStr := fmt.Sprintf("%d", index+1)
-            indexRuneCount := utf8.RuneCountInString(indexStr)
-            taskNameRuneCount := utf8.RuneCountInString(task.Name)
-            
-            taskRow = fmt.Sprintf("%s %s%s %s%s",
-                padStr,
-                indexStr,
-                strings.Repeat(" ", idWidth-1-indexRuneCount),
-                task.Name,
-                strings.Repeat(" ", taskWidth-1-taskNameRuneCount),
-            )
-        }
-        var statusChar string
-        if task.Done {
-            statusChar = colorPal.StatusCharStyle.Render(utils.MapDoneToChar(task.Done))
-        } else {
-            statusChar = statusStyle.Render(utils.MapDoneToChar(task.Done))
-        }
+	var (
+		completedTasks int
+		taskRow        string
+	)
 
-        taskRendered := statusStyle.Render(taskRow) + statusChar
-        fmt.Println(taskRendered)
-    }
-    return completedTasks
+	for index, task := range tasks {
+		statusStyle := plt.TaskPendingStyle
+		if task.Done {
+			statusStyle = plt.TaskCompletedStyle
+			completedTasks++
+
+			indexStr := fmt.Sprintf("%d", index+1)
+
+			indexRuneCount := utf8.RuneCountInString(indexStr)
+			taskNameRuneCount := utf8.RuneCountInString(task.Name)
+
+			indexStrStyled := plt.StrikeStyle.Render(indexStr)
+			taskNameStyled := plt.StrikeStyle.Render(task.Name)
+
+			taskRow = fmt.Sprintf("%s %s%s %s%s",
+				padStr,
+				indexStrStyled,
+				strings.Repeat(" ", idWidth-1-indexRuneCount),
+				taskNameStyled,
+				strings.Repeat(" ", taskWidth-1-taskNameRuneCount),
+			)
+		} else {
+			indexStr := fmt.Sprintf("%d", index+1)
+			indexRuneCount := utf8.RuneCountInString(indexStr)
+			taskNameRuneCount := utf8.RuneCountInString(task.Name)
+
+			taskRow = fmt.Sprintf("%s %s%s %s%s",
+				padStr,
+				indexStr,
+				strings.Repeat(" ", idWidth-1-indexRuneCount),
+				task.Name,
+				strings.Repeat(" ", taskWidth-1-taskNameRuneCount),
+			)
+		}
+		var statusChar string
+		if task.Done {
+			statusChar = plt.StatusCharStyle.Render(utils.MapDoneToChar(task.Done))
+		} else {
+			statusChar = statusStyle.Render(utils.MapDoneToChar(task.Done))
+		}
+
+		taskRendered := statusStyle.Render(taskRow) + statusChar
+		fmt.Println(taskRendered)
+	}
+	return completedTasks
 }
 
 // RenderProgressBar creates a text-based progress bar.
-func RenderProgressBar(plt palette.ColorPalette, total,  completed int) {
-    remaingTasksBarStyle := lipgloss.NewStyle().
-        Foreground(lipgloss.Color("#3A3A3A")).
-        Bold(true)
-    taskCompletedStyle := lipgloss.NewStyle().
-        Foreground(lipgloss.Color("#F92672")).
-        Bold(true)
-    tasksRatioStyles := lipgloss.NewStyle().
-        Foreground(lipgloss.Color("#86962E"))
+func RenderProgressBar(plt palette.ColorStyles, total, completed int) {
+	completedTasksBar := plt.CompletedsBar.Render(
+		strings.Repeat("━", 3*completed),
+	)
+	remaingTasksBar := plt.RemaingTasksBarStyle.Render(
+		strings.Repeat("━", 3*(total-completed)),
+	)
+	taskRatio := plt.TaskRatioStyles.Render(
+		fmt.Sprintf("%d/%d", completed, total),
+	)
 
-    completedBar := taskCompletedStyle.Render(
-        strings.Repeat("━", completed*5),
-    )
-    remaingTasksBar := remaingTasksBarStyle.Render(
-        strings.Repeat("━", 5* (total - completed)),
-    )
-    taskRatio := tasksRatioStyles.Render(
-        fmt.Sprintf("%d/%d", completed, total),
-    )
-    
-    progressBar := plt.CompleteBar.Sprint(completedBar) + plt.FinishedBar.Sprintf(remaingTasksBar)
-    completeBar := fmt.Sprintf("%s %s", progressBar, taskRatio)
-    width, err := utils.GetTerminalFullWidth()
-    if err != nil {
-        fmt.Printf("error getting terminal width, err: %s", err)
-    }
-    centeredBar := text.Align(text.AlignCenter).Apply(completeBar, width)
+	width, err := utils.GetTerminalFullWidth()
+	if err != nil {
+		fmt.Printf("error getting terminal width, err: %s", err)
+	}
 
-    fmt.Println(centeredBar)
+	progressBar := fmt.Sprintf("%s%s %s", completedTasksBar, remaingTasksBar, taskRatio)
+	fmt.Println(
+		text.
+			Align(text.AlignCenter).
+			Apply(progressBar, width),
+	)
+}
+
+// DisplayBox creates a box with a label and message, handling styled text properly
+func DisplayBox(plt palette.ColorStyles, message, label string, width int) string {
+	var boxStyle lipgloss.Style
+	if label == "Error" {
+		boxStyle = plt.ErrorStyle
+	}
+
+	labelFormatted := boxStyle.Render(label)
+
+	topLeft := "╭"
+	topRight := "╮"
+	bottomLeft := "╰"
+	bottomRight := "╯"
+	horizontal := "─"
+	vertical := "│"
+
+	visibleLabelLen := lipgloss.Width(labelFormatted)
+	visibleMsgLen := lipgloss.Width(message)
+
+	contentWidth := width - 4
+
+	labelWithSpaces := " " + labelFormatted + " "
+	visibleLabelWithSpacesLen := visibleLabelLen + 2
+	topBorder := topLeft + horizontal + labelWithSpaces + strings.Repeat(horizontal, width-visibleLabelWithSpacesLen-3) + topRight
+
+	paddingLen := contentWidth - visibleMsgLen
+	paddedMessage := " " + message + strings.Repeat(" ", paddingLen) + " "
+	messageLine := vertical + paddedMessage + vertical
+
+	bottomBorder := bottomLeft + strings.Repeat(horizontal, width-2) + bottomRight
+
+	return topBorder + "\n" + messageLine + "\n" + bottomBorder
 }

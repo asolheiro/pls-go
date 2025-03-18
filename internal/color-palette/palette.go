@@ -2,99 +2,88 @@ package palette
 
 import (
 	"github.com/charmbracelet/lipgloss"
-	"github.com/gookit/color"
 )
 
 type ColorStyles struct {
-	HeaderStyle lipgloss.Style
-	DividerStyle lipgloss.Style
-	TaskCompletedStyle lipgloss.Style
-	TaskPendingStyle lipgloss.Style
-	StrikeStyle lipgloss.Style
-	StatusCharStyle lipgloss.Style
+	HeaderStyle           lipgloss.Style
+	DividerStyle          lipgloss.Style
+	TaskCompletedStyle    lipgloss.Style
+	TaskPendingStyle      lipgloss.Style
+	StrikeStyle           lipgloss.Style
+	StatusCharStyle       lipgloss.Style
+	HeaderGreetingStyle   lipgloss.Style
+	QuoteStyle            lipgloss.Style
+	CompletedsBar         lipgloss.Style
+	RemaingTasksBarStyle  lipgloss.Style
+	TaskCompletedBarStyle lipgloss.Style
+	TaskRatioStyles       lipgloss.Style
+	CenteredStyle         lipgloss.Style
+	ErrorStyle            lipgloss.Style
 }
 
 func NewPalette() ColorStyles {
 	headerStyle := lipgloss.NewStyle().
 		Bold(false).
-		Foreground(lipgloss.Color("#D47BD5")).
+		Foreground(PinkLilac).
 		Align(lipgloss.Center)
 
 	dividerStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#D77DD8"))
+		Foreground(PurpleOrchid)
 
 	taskCompletedStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#888C84"))
+		Foreground(GrayAsh)
 
 	taskPendingStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#B38EE9"))
+		Foreground(PurpleLavender)
 
 	strikeStyle := lipgloss.NewStyle().
 		Strikethrough(true).
 		Align(lipgloss.Center)
 
 	statusCharStyle := lipgloss.NewStyle().
-		Foreground(lipgloss.Color("#A5D9A3"))
+		Foreground(GreenMint)
+
+	headerGreetingStyle := lipgloss.NewStyle().
+		Foreground(YellowGolden)
+
+	quoteStyle := lipgloss.NewStyle().
+		Foreground(GraySilver).
+		Align(lipgloss.Center)
+
+	completedsBarStryle := lipgloss.NewStyle().
+		Foreground(PinkNeon)
+
+	remaingTasksBarStyle := lipgloss.NewStyle().
+		Foreground(GrayCharcoal).
+		Bold(true)
+
+	taskCompletedBarStyle := lipgloss.NewStyle().
+		Foreground(PinkNeon).
+		Bold(true)
+
+	tasksRatioStyles := lipgloss.NewStyle().
+		Foreground(GreenOlive)
+
+	centeredStyle := lipgloss.NewStyle().
+		Align(lipgloss.Center)
+
+	errorStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color(PinkCarmine))
 
 	return ColorStyles{
-		HeaderStyle: headerStyle,
-		DividerStyle: dividerStyle,
-		TaskCompletedStyle: taskCompletedStyle,
-		TaskPendingStyle: taskPendingStyle,
-		StrikeStyle: strikeStyle,
-		StatusCharStyle: statusCharStyle,
+		HeaderStyle:           headerStyle,
+		DividerStyle:          dividerStyle,
+		TaskCompletedStyle:    taskCompletedStyle,
+		TaskPendingStyle:      taskPendingStyle,
+		StrikeStyle:           strikeStyle,
+		StatusCharStyle:       statusCharStyle,
+		HeaderGreetingStyle:   headerGreetingStyle,
+		QuoteStyle:            quoteStyle,
+		CompletedsBar:         completedsBarStryle,
+		RemaingTasksBarStyle:  remaingTasksBarStyle,
+		TaskCompletedBarStyle: taskCompletedBarStyle,
+		TaskRatioStyles:       tasksRatioStyles,
+		CenteredStyle:         centeredStyle,
+		ErrorStyle:            errorStyle,
 	}
 }
-
-// ColorPalette representa um conjunto de cores usadas na aplicação
-type ColorPalette struct {
-	ErrorLine        color.RGBColor
-	ErrorText        color.RGBColor
-	WarningLine      color.RGBColor
-	WarningText      color.RGBColor
-	UpdateLine       color.RGBColor
-	InsertDeleteLine color.RGBColor
-	InsertDeleteText color.RGBColor
-	MsgPending       color.RGBColor
-	TableHeader      color.RGBColor
-	TaskDone         color.RGBColor
-	TaskPending      color.RGBColor
-	HeaderGreeting   color.RGBColor
-	Quote            color.RGBColor
-	Author           color.RGBColor
-	BackgroundBar    color.RGBColor
-	CompleteBar      color.RGBColor
-	FinishedBar      color.RGBColor
-}
-
-// LoadColorPalette return a ColorPalette based on defined consts
-func LoadColorPalette() ColorPalette {
-	return ColorPalette{
-		ErrorLine:        getColorFromConst(PLSErrorLineStyle),
-		ErrorText:        getColorFromConst(PLSErrorTextStyle),
-		WarningLine:      getColorFromConst(PLSWarningLineStyle),
-		WarningText:      getColorFromConst(PLSWarningTextStyle),
-		UpdateLine:       getColorFromConst(PLSUpdateLineStyle),
-		InsertDeleteLine: getColorFromConst(PLSInsertDeleteLineStyle),
-		InsertDeleteText: getColorFromConst(PLSInsertDeleteTextStyle),
-		MsgPending:       getColorFromConst(PLSMsgPendingStyle),
-		TableHeader:      getColorFromConst(PLSTableHeaderStyle),
-		TaskDone:         getColorFromConst(PLSTaskDoneStyle),
-		TaskPending:      getColorFromConst(PLSTaskPendingStyle),
-		HeaderGreeting:   getColorFromConst(PLSHeaderGreetingsStyle),
-		Quote:            getColorFromConst(PLSQuoteStyle),
-		Author:           getColorFromConst(PLSAuthorStyle),
-		BackgroundBar:    getColorFromConst(PLSBackgroundBarStyle),
-		CompleteBar:      getColorFromConst(PLSCompleteBarStyle),
-		FinishedBar:      getColorFromConst(PLSFinishedBarStyle),
-	}
-}
-
-// getColorFromConst convert a hexdecimal code to color.RGBColor
-func getColorFromConst(hexColor string) color.RGBColor {
-	if hexColor == "" {
-		return color.RGBColor{}
-	}
-	return color.Hex(hexColor)
-}
-

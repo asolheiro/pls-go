@@ -14,25 +14,42 @@ const fileName = "config.json"
 
 func main() {
 	settings.CheckAndCreateConfig(fileName)
-	plt := palette.LoadColorPalette()
+	plt := palette.NewPalette()
 
-	if len(os.Args) == 1{
-		console.PrintTasksTable(plt)
+	if len(os.Args) == 1 {
+		console.RootCmd(plt)
 	} else {
 		switch os.Args[1] {
 		case "add":
-			if os.Args[2] != "" {
+			if os.Args[2] == "" {
+				fmt.Println("Insert a task")
+			} else if os.Args[2] == "--help" {
+			} else {
 				if err := operations.AddTask(os.Args[2]); err == nil {
 					console.AddTaskConsole(plt, os.Args[2])
 				}
-			} else {
-				fmt.Println("Insert a task")
 			}
+		case "clean":
+		case "clear":
+		case "del":
+		case "done":
+		case "edit":
+		case "move":
+		case "tasks":
+		case "callme":
+		case "config":
+		case "docs":
+		case "quotes":
+		case "setup":
+		case "tasks-progress":
+		case "version":
+		case "cont-done":
+		case "count-undone":
+		case "--help":
+			console.RootHelp(plt)
 		default:
-			fmt.Println("Invalid command")
+			console.CmdNotFound(plt)
 		}
 
 	}
 }
-
-

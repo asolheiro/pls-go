@@ -8,19 +8,25 @@ import (
 	palette "github.com/asolheiro/pls/internal/color-palette"
 	"github.com/asolheiro/pls/internal/settings"
 	"github.com/asolheiro/pls/internal/utils"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/jedib0t/go-pretty/text"
 )
 
-func PrintGreeting(plt palette.ColorPalette, name string) {
-	size, _ := utils.GetTerminalFullWidth()
-	greetingForm := text.AlignCenter.Apply(
-		fmt.Sprintf("Hello, %s! %s", name, formatTimeAndDate(time.Now())), 
-		size,
+func PrintGreeting(plt palette.ColorStyles, name string) {
+	rawGreeting := fmt.Sprintf("Hello, %s! %s", name, formatTimeAndDate(time.Now()))
+	greetingFormatted := plt.HeaderGreetingStyle.
+		Align(lipgloss.Center).
+		Render(
+			fmt.Sprintf("Hello, %s! %s", name, formatTimeAndDate(time.Now())),
+		)
+
+	linesPadd := plt.HeaderGreetingStyle.Render(utils.LinePaddings(rawGreeting))
+	fmt.Println(
+		linesPadd + " " + greetingFormatted + " " + linesPadd,
 	)
-	plt.HeaderGreeting.Println(utils.ReplaceSpacesWithLines(greetingForm))
 }
 
-func PrintQuotes(plt palette.ColorPalette) {
+func PrintQuotes(plt palette.ColorStyles) {
 	size, _ := utils.GetTerminalFullWidth()
 	quote, err := settings.GetRandQuote()
 	if err != nil {
@@ -36,15 +42,18 @@ func PrintQuotes(plt palette.ColorPalette) {
 		fmt.Sprintf(" ・ %s ・", quote.Author),
 		size,
 	)
-	plt.Quote.Println(quoteForm)
-	plt.Author.Println(authorForm)
+
+	fmt.Println(
+		plt.QuoteStyle.Render(quoteForm),
+	)
+	fmt.Println(
+		plt.QuoteStyle.Render(authorForm),
+	)
 }
 
 func formatTimeAndDate(t time.Time) string {
-	return fmt.Sprintf("It's %d %s | %s", 
+	return fmt.Sprintf("It's %d %s | %s",
 		t.Day(),
 		t.Format("Jan"),
 		t.Format("03:04 PM"))
 }
-
-
