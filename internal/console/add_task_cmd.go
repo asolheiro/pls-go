@@ -43,6 +43,42 @@ func AddTaskHeader(plt palette.ColorStyles, taskName string) {
 	fmt.Println(headerFormatted)
 }
 
-func AddTaskHelp() {
+func AddTaskHelp(plt palette.ColorStyles) {
+	width, _ := utils.GetTerminalFullWidth()
+	fmt.Printf(
+		"\n%s%s\n%s\n",
+		plt.TaskCompletedStyle.
+			PaddingLeft(2).
+			Render("Usage:"),
+		plt.QuoteStyle.
+			Bold(true).
+			PaddingLeft(1).
+			Render("pls add [OPTIONS] TASK\n"),
+		plt.TaskCompletedStyle.
+			PaddingLeft(2).
+			Render("Add a Task ✨ (Add task name inside quotes)\n"),
+	)
+	ast := plt.ErrorStyle.Render("*")
+	task := plt.QuoteStyle.Render("\ttask\t\tTEXT")
+	defaults := plt.InfoStyle.Render("\t[default: None]")
+	argumentsInfo := ast + task + defaults
 
+	label := plt.InfoStyle.Render("Arguments")
+	fmt.Println(
+		DisplayBox(plt, argumentsInfo, label, width),
+	)
+	
+	label = plt.InfoStyle.Render("Options")
+	optionsCmdInfo := plt.QuoteStyle.
+		Bold(true).
+		PaddingLeft(2).
+		Render("--help")
+	optionsDescInfo := plt.InfoStyle.
+		Render("\t\tShow this message and exit.")
+
+	optionsInfo := optionsCmdInfo + optionsDescInfo
+
+	fmt.Println(
+		DisplayBox(plt, optionsInfo, label, width),
+	)
 }

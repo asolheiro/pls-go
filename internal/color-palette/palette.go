@@ -19,6 +19,7 @@ type ColorStyles struct {
 	TaskRatioStyles       lipgloss.Style
 	CenteredStyle         lipgloss.Style
 	ErrorStyle            lipgloss.Style
+	InfoStyle             lipgloss.Style
 }
 
 func NewPalette() ColorStyles {
@@ -70,6 +71,10 @@ func NewPalette() ColorStyles {
 	errorStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color(PinkCarmine))
 
+	infoStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color(GraySilver)).
+		Faint(true)
+
 	return ColorStyles{
 		HeaderStyle:           headerStyle,
 		DividerStyle:          dividerStyle,
@@ -85,5 +90,6 @@ func NewPalette() ColorStyles {
 		TaskRatioStyles:       tasksRatioStyles,
 		CenteredStyle:         centeredStyle,
 		ErrorStyle:            errorStyle,
+		InfoStyle:             infoStyle,
 	}
 }

@@ -24,6 +24,7 @@ func main() {
 			if os.Args[2] == "" {
 				fmt.Println("Insert a task")
 			} else if os.Args[2] == "--help" {
+				console.AddTaskHelp(plt)
 			} else {
 				if err := operations.AddTask(os.Args[2]); err == nil {
 					console.AddTaskConsole(plt, os.Args[2])
