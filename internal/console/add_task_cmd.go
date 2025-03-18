@@ -82,3 +82,25 @@ func AddTaskHelp(plt palette.ColorStyles) {
 		DisplayBox(plt, optionsInfo, label, width),
 	)
 }
+
+func AddMissingTask(plt palette.ColorStyles) {
+	fmt.Printf(
+		"\n%s%s\n%s\n",
+		plt.HeaderGreetingStyle.
+			PaddingLeft(2).
+			Render("Usage:"),
+		plt.QuoteStyle.
+			Bold(true).
+			PaddingLeft(1).
+			Render("pls add [OPTIONS] TASK\n"),
+		plt.TaskCompletedStyle.
+			PaddingLeft(2).
+			Render("Try 'pls add --help' for help.\n"),
+	)
+	width, _ := utils.GetTerminalFullWidth()
+	message := "Missing argument 'TASK'."
+	errorLabel := plt.ErrorStyle.Bold(true).Render("Error")
+	fmt.Println(
+		DisplayBox(plt, message, errorLabel, width),
+	)
+}

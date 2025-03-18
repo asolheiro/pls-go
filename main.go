@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	palette "github.com/asolheiro/pls/internal/color-palette"
@@ -21,8 +20,8 @@ func main() {
 	} else {
 		switch os.Args[1] {
 		case "add":
-			if os.Args[2] == "" {
-				fmt.Println("Insert a task")
+			if len(os.Args) == 2  {
+				console.AddMissingTask(plt)
 			} else if os.Args[2] == "--help" {
 				console.AddTaskHelp(plt)
 			} else {
